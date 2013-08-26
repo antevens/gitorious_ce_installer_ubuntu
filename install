@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #!/bin/bash
 if ! [ $(id -u) = 0 ]; then
    echo "You should run this script as root/superuser."
@@ -12,7 +10,7 @@ echo "Setting Gitorious hostname..."
 ./change_hostname.sh
 
 # Figure out we we have yum, apt or something else to use for installing Puppet
-color_echo cyan "########## Start Defaults ##########"
+echo "########## Start Defaults ##########"
 osfamily='Unknown'
 apt-get help > /dev/null 2>&1 && osfamily='Debian'
 yum help help > /dev/null 2>&1 && osfamily='RedHat'
@@ -38,7 +36,7 @@ case ${osfamily} in
     ;;
     "Debian")
     # Debian based
-        apt-get install -y ruby puppet ruby-devel rubygems
+        apt-get install -y ruby puppet ruby-dev rubygems
         
     ;;
     "Darwin")

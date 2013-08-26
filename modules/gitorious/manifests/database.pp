@@ -13,7 +13,7 @@ class gitorious::database {
 
   mysql::create_database { "gitorious_production":
     username => "gitorious",
-    password => "DB_PASSWORD",
+    password => "0abced070e846b7a73d067a37808115612ca06f9",
   }
 
   file {"db_seed":
