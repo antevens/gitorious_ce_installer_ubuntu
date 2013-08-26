@@ -18,7 +18,17 @@ class gitorious::native_git_daemons {
     require => Package["git-daemon"],
   }
 
+  case $operatingsystem {
+    "CentOS", "RedHat": { 
+        $package_list = ["git-daemon"]
+    }
+    "Ubuntu", "Debian": {
+        $package_list = ["git-daemon-run"]
+    }
+  }
+
   package {"git-daemon":
+    name => "${package_list}",
     ensure => installed,
   }
 
