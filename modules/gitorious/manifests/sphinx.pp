@@ -2,10 +2,20 @@ class gitorious::sphinx {
 
   Exec { path => ["/usr/local/bin","/usr/bin","/bin", "/usr/sbin"] }
 
+  case $operatingsystem {
+    "CentOS", "RedHat": { 
+        $package_list = ["sphinx"]
+    }
+    "Ubuntu", "Debian": {
+        $package_list = ["sphinx-common"]
+    }
+  }
+
   $app_root = $gitorious::app_root
 
   # Installed after database has been populated
   package { "sphinx":
+    name => "${package_list}",
     ensure => installed,
   }
 
