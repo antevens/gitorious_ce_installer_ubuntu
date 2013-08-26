@@ -2,15 +2,19 @@ class gitorious::apache {
   Exec { path => ["/opt/ruby-enterprise/bin","/usr/local/bin","/usr/bin","/bin", "/usr/sbin"] }
 
   case $operatingsystem {
-    CentOS, RedHat: { $package_list = ["httpd","httpd-devel","apr-devel","apr-util-devel","mod_ssl"],
-              $web_server_dir = "/etc/httpd"
-              $web_confd_dir = "${web_server_dir}/conf.d",
-              $web_module_dir = "${web_server_dir}/modules"}
-    Ubuntu, Debian: { $package_list = ["apache2","apache2-dev","libapr1","libapr1-dev","libapr-memcache0","libapr-memcache0-dev","mod_ssl"] }
-              $web_server_dir = "/etc/apache2" 
-              $web_confd_dir = "${web_server_dir}/conf.d",
-              $web_module_dir = "${web_server_dir}/available-modules}
- }
+    "CentOS", "RedHat": { 
+        $package_list = ["httpd","httpd-devel","apr-devel","apr-util-devel","mod_ssl"]
+        $web_server_dir = "/etc/httpd"
+        $web_confd_dir = "${web_server_dir}/conf.d"
+        $web_module_dir = "${web_server_dir}/modules"
+    }
+    "Ubuntu", "Debian": {
+        $package_list = ["apache2","apache2-dev","libapr1","libapr1-dev","libapr-memcache0","libapr-memcache0-dev","mod_ssl"]
+        $web_server_dir = "/etc/apache2"
+        $web_confd_dir = "${web_server_dir}/conf.d"
+        $web_module_dir = "${web_server_dir}/available-modules"
+    }
+  }
 
   package { $package_list: ensure => installed }
 

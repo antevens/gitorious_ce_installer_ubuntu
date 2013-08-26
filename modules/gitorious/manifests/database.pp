@@ -1,14 +1,25 @@
 class gitorious::database {
-  $packages = ["mysql","mysql-devel","mysql-server"]
 
   Exec { path => ["/usr/local/bin","/usr/bin","/bin"] }
 
-  package { $packages: ensure => installed }
+  case $operatingsystem {
+    "CentOS", "RedHat": { 
+        $package_list = ["mysql","mysql-devel","mysql-server"]
+        $mysql_service_name = "mysqld"
+    }
+    "Ubuntu", "Debian": {
+        $package_list = ["mysql"]
+        $mysql_service_name = "mysql"
+    }
+  }
 
-  service {"mysqld":
+  package { $package_list: ensure => installed }
+
+  service { "mysql":
+    name => "${mysql_service_name}",
     ensure => running,
     enable => true,
-    require => Package["mysql-server"],
+    require => Package["${package_list}"],
   }
 
   mysql::create_database { "gitorious_production":
@@ -30,7 +41,7 @@ class gitorious::database {
   exec { "install_bundler":
     command => "gem install --no-ri --no-rdoc -v '$bundler_version' bundler",
     creates => "${gem_path}/bundler-$bundler_version",
-    require => [Package["mysql-devel"], Exec["clone_gitorious_source"]],
+    require => [Package["${package_list}"], Exec["clone_gitorious_source"]],
   }
 
   exec {"bundle_install":

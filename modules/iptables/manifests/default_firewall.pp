@@ -13,6 +13,10 @@ class iptables::default_firewall {
     mode => "0600",
   }
 
+  exec {"restart_ubuntu_networking":
+    command => "/usr/bin/nohup /bin/sh -c '/usr/sbin/invoke-rc.d networking stop; sleep 2; /usr/sbin/invoke-rc.d networking start'",
+  }
+
   case $operatingsystem {
     Ubuntu, Debian: { 
       file { "/etc/network/if-pre-up.d/iptablesload":
@@ -21,6 +25,7 @@ class iptables::default_firewall {
         owner => "root",
         group => "root",
         mode => "0700",
+        require => Exec["restart_ubuntu_networking"],
       }
       file { "/etc/network/if-post-down.d/iptablessave":
         ensure => present,
@@ -28,9 +33,7 @@ class iptables::default_firewall {
         owner => "root",
         group => "root",
         mode => "0700",
-      }
-      exec {"restart_networking":
-        command => "nohup sh -c "invoke-rc.d networking stop; sleep 2; invoke-rc.d networking start",
+        require => Exec["restart_ubuntu_networking"],
       }
     }
     CentOS, RedHat: {
