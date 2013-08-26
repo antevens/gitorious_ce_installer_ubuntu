@@ -2,9 +2,15 @@ class gitorious::apache {
   Exec { path => ["/opt/ruby-enterprise/bin","/usr/local/bin","/usr/bin","/bin", "/usr/sbin"] }
 
   case $operatingsystem {
-    CentOS: { $package_list = ["httpd","httpd-devel","apr-devel","apr-util-devel","mod_ssl"] }
-    RedHat: { $package_list = ["httpd","httpd-devel","apr-devel","apr-util-devel","mod_ssl"] }
-  }
+    CentOS, RedHat: { $package_list = ["httpd","httpd-devel","apr-devel","apr-util-devel","mod_ssl"],
+              $web_server_dir = "/etc/httpd"
+              $web_confd_dir = "${web_server_dir}/conf.d",
+              $web_module_dir = "${web_server_dir}/modules"}
+    Ubuntu, Debian: { $package_list = ["apache2","apache2-dev","libapr1","libapr1-dev","libapr-memcache0","libapr-memcache0-dev","mod_ssl"] }
+              $web_server_dir = "/etc/apache2" 
+              $web_confd_dir = "${web_server_dir}/conf.d",
+              $web_module_dir = "${web_server_dir}/available-modules}
+ }
 
   package { $package_list: ensure => installed }
 
@@ -12,18 +18,25 @@ class gitorious::apache {
     name => $operatingsystem ? {
       Centos => "httpd",
       RedHat => "httpd",
+      Ubuntu => "apache2",
     },
     enable => true,
     ensure => running,
-    subscribe => File["/etc/httpd/conf.d/passenger.conf"],
+    subscribe => File["${web_confd_dir}/passenger.conf"],
     require => Exec["install_xsendfile"],
   }
-
-  exec {"install_passenger_module":
-    command => "passenger-install-apache2-module -a && touch /opt/passenger_installed",
-    creates => "/opt/passenger_installed",
-    require => Exec["install_our_passenger"],
-  }
+  case $operatingsystem {
+    Centos, Redhat: {
+      exec {"install_passenger_module":
+        command => "passenger-install-apache2-module -a && touch /opt/passenger_installed",
+        creates => "/opt/passenger_installed",
+        require => Exec["install_our_passenger"],
+      }
+    }
+   Ubuntu, Debian: {
+     package { libapache2-mod-passenger: ensure => installed}
+   }
+ }
 
   exec {"install_our_passenger":
     command => "gem install --no-ri --no-rdoc -v '${gitorious::passenger_version}' passenger",

@@ -11,15 +11,54 @@ echo "Starting the Gitorious installation..."
 echo "Setting Gitorious hostname..."
 ./change_hostname.sh
 
-echo "Disabling SELinux..."
-sed -i "s/enforcing/disabled/" /etc/selinux/config
-setenforce 0
+# Figure out we we have yum, apt or something else to use for installing Puppet
+color_echo cyan "########## Start Defaults ##########"
+osfamily='Unknown'
+apt-get help > /dev/null 2>&1 && osfamily='Debian'
+yum help help > /dev/null 2>&1 && osfamily='RedHat'
+if [ "${OS}" == 'SunOS' ]; then osfamily='Solaris'; fi
+if [ `echo "${OSTYPE}" | grep 'darwin'` ]; then osfamily='Darwin'; fi
+if [ "${OSTYPE}" == 'cygwin' ]; then osfamily='Cygwin'; fi
+echo "Detected OS based on: ${osfamily}"
 
-echo "Installing Ruby, RubyGems and Puppet..."
-yum install -y ruby ruby-devel rubygems
-gem update --system
-gem install -v 1.8.25 rubygems-update && ruby `gem env gemdir`/gems/rubygems-update-1.8.25/setup.rb
-gem install -y --no-ri --no-rdoc puppet -v=2.7.11
+
+case ${osfamily} in
+    "RedHat")
+    # Redhat based
+        echo "Disabling SELinux..."
+        sed -i "s/enforcing/disabled/" /etc/selinux/config
+        setenforce 0
+
+        echo "Installing Ruby, RubyGems and Puppet..."
+        yum install -y ruby ruby-devel rubygems
+        gem update --system
+        gem install -v 1.8.25 rubygems-update && ruby `gem env gemdir`/gems/rubygems-update-1.8.25/setup.rb
+        gem install -y --no-ri --no-rdoc puppet -v=2.7.11
+
+    ;;
+    "Debian")
+    # Debian based
+        apt-get install -y ruby puppet ruby-devel rubygems
+        
+    ;;
+    "Darwin")
+    # Mac OS X
+                echo "Darwin based operating systems not yet supported!"
+                exit 1
+    ;;
+    "Solaris")
+    # Solaris, not implemented
+                echo "Solaris/SunOS operating sytems not yet supported!"
+                exit 1
+    ;;
+    *)
+    # Everything else
+                echo "Unable to determine operating system or handling not implemented yet!"
+                exit 1
+    ;;
+esac
+
+# Generic section, applied on all OSes
 
 if [ "`cat modules/gitorious/manifests/database.pp | grep DB_PASSWORD`" ]; then
     echo "Randomizing db password in puppet recipe..."

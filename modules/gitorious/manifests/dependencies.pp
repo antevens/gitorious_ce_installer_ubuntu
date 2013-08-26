@@ -7,6 +7,10 @@ class gitorious::dependencies {
     CentOS: { $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc", "ruby-devel", "openssl"]}
   }
 
+  case $operatingsystem {
+    Ubuntu: { $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc", "ruby-dev", "openssl"]}
+  }
+
   package { $package_list: ensure => installed }
 
   case $operatingsystemrelease {
