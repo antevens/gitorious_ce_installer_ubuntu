@@ -4,7 +4,18 @@ node default inherits gitorious-ce {
 }
 
 node gitorious-ce {
-  package { "cronie":
+
+  case $operatingsystem {
+    "CentOS", "RedHat": { 
+        $package_list = ["cronie"]
+    }
+    "Ubuntu", "Debian": {
+        $package_list = ["cron"]
+    }
+  }
+
+
+  package { $package_list:
     ensure => installed,
   }
 
