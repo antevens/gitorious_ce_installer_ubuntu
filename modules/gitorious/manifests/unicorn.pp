@@ -1,4 +1,14 @@
 class gitorious::unicorn {
+
+  case $operatingsystem {
+    "CentOS", "RedHat": { 
+        $unicorn_init_template = "gitorious/etc/init.d/gitorious-unicorn-redhat.erb"
+    }
+    "Ubuntu", "Debian": {
+        $unicorn_init_template = "gitorious/etc/init.d/gitorious-unicorn-ubuntu.erb"
+    }
+  }
+
   $app_root = "${gitorious::app_root}"
   file { "unicorn.rb":
     path => "${gitorious::app_root}/config/unicorn.rb",
@@ -14,7 +24,7 @@ class gitorious::unicorn {
     group => root,
     mode => 0755,
     require => File["unicorn.rb"],
-    content => template("gitorious/etc/init.d/gitorious-unicorn.erb")
+    content => template("${unicorn_init_template}")
   }
 
   monit::config{ "unicorn":
