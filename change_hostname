@@ -1,0 +1,53 @@
+#!/bin/bash
+if ! [ $(id -u) = 0 ]; then
+   echo "You should run this script as root/superuser."
+   exit 1
+fi
+
+CURR_HOSTNAME="`hostname`"
+CURR_HOSTNAME_SHORT="`hostname -s`"
+
+echo "What hostname should this server and Gitorious instance have?"
+echo "(Just hit enter for current hostname '${CURR_HOSTNAME}'):"
+echo "NOTE: hostname must contain at least one period (.)"
+
+# Read input
+read INPUT
+
+if [ -z "${INPUT}" ]; then
+  NEW_HOSTNAME="${CURR_HOSTNAME}"
+  DOMAIN_NAME="`hostname | sed -n 's/[^.]*\.//p' || dnsdomainname 2> /dev/null`"
+else
+  NEW_HOSTNAME="${INPUT}"
+  DOMAIN_NAME="`echo ${NEW_HOSTNAME} | sed -n 's/[^.]*\.//p'`"
+fi
+
+# If the DNS domain of the hostname is not a FQDN we exit since this is required
+if [ "${DOMAIN_NAME}" == "" ]; then
+  echo "Hostname must be FQDN with domain set, e.g. hostname.example.com, '${NEW_HOSTNAME}' is not a valid hostname for Gitorious"
+  exit 1
+else
+  echo "Hostname will be: '${NEW_HOSTNAME}'"
+fi
+
+# Change Gitorious config file
+EXISTING_GITORIOUS_CONFIG_FILE="/var/www/gitorious/app/config/gitorious.yml"
+if [ -f "${EXISTING_GITORIOUS_CONFIG_FILE}" ]; then
+  echo "Updating Gitorious hostname setting"
+  (sed -i "s/gitorious_host:.*/gitorious_host: ${NEW_HOSTNAME}/" /var/www/gitorious/app/config/gitorious.yml)
+fi
+
+# Set sysconfig/network on RedHat and etc/hostname
+(sed -i "s/^HOSTNAME=.*/HOSTNAME=${NEW_HOSTNAME}/" /etc/sysconfig/network 2> /dev/null)
+(echo "${NEW_HOSTNAME}" > /etc/hostname)
+
+# Set hostname dynamically and get short form
+(hostname "${NEW_HOSTNAME}")
+NEW_HOSTNAME_SHORT="`hostname -s`"
+
+# Fix hosts file, short format, long format and localdomain format
+(sed -i "s/\([\s\t\n]\)${CURR_HOSTNAME_SHORT}\([\s\t\n]\)/\1${NEW_HOSTNAME_SHORT}\2/" /etc/hosts)
+(sed -i "s/"${CURR_HOSTNAME}.localdomain"/${NEW_HOSTNAME}/" /etc/hosts)
+(sed -i "s/${CURR_HOSTNAME}/${NEW_HOSTNAME}/" /etc/hosts)
+
+echo "Server and Gitorious hostname set to ${NEW_HOSTNAME}"

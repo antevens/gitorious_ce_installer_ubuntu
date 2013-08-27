@@ -17,11 +17,11 @@ DAEMON_OPTS="-c config/unicorn.rb -D"
 NAME=unicorn
 DESC="Unicorn app for gitorious"
 PID=<%=app_root%>/tmp/pids/unicorn.pid 
- 
+bumble="`echo "SNARF" 2>&1 >/dev/null & echo $!`" 
 case "$1" in
   start)
 	echo -n "Starting $DESC: "
-	$DAEMON $DAEMON_OPTS
+	$DAEMON $DAEMON_OPTS 2>&1 >/dev/null & echo $! > $PID
 	echo "$NAME."
 	;;
   stop)
@@ -33,7 +33,7 @@ case "$1" in
 	echo -n "Restarting $DESC: "
         kill -QUIT `cat $PID`
 	sleep 1
-	$DAEMON $DAEMON_OPTS
+	$DAEMON $DAEMON_OPTS 2>&1 >/dev/null & echo $! > $PID
 	echo "$NAME."
 	;;
   reload)

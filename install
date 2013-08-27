@@ -7,20 +7,19 @@ fi
 echo "Starting the Gitorious installation..."
 
 echo "Setting Gitorious hostname..."
-./change_hostname.sh
+source ./change_hostname.sh
 
 # Figure out we we have yum, apt or something else to use for installing Puppet
-echo "########## Start Defaults ##########"
-osfamily='Unknown'
-apt-get help > /dev/null 2>&1 && osfamily='Debian'
-yum help help > /dev/null 2>&1 && osfamily='RedHat'
-if [ "${OS}" == 'SunOS' ]; then osfamily='Solaris'; fi
-if [ `echo "${OSTYPE}" | grep 'darwin'` ]; then osfamily='Darwin'; fi
-if [ "${OSTYPE}" == 'cygwin' ]; then osfamily='Cygwin'; fi
-echo "Detected OS based on: ${osfamily}"
+OS_FAMILY='Unknown'
+apt-get help > /dev/null 2>&1 && OS_FAMILY='Debian'
+yum help help > /dev/null 2>&1 && OS_FAMILY='RedHat'
+if [ "${OS}" == 'SunOS' ]; then OS_FAMILY='Solaris'; fi
+if [ `echo "${OSTYPE}" | grep 'darwin'` ]; then OS_FAMILY='Darwin'; fi
+if [ "${OSTYPE}" == 'cygwin' ]; then OS_FAMILY='Cygwin'; fi
+echo "Detected OS based on: ${OS_FAMILY}"
 
 
-case ${osfamily} in
+case ${OS_FAMILY} in
     "RedHat")
     # Redhat based
         echo "Disabling SELinux..."
