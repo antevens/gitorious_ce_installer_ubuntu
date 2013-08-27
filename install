@@ -7,7 +7,7 @@ fi
 echo "Starting the Gitorious installation..."
 
 echo "Setting Gitorious hostname..."
-source ./change_hostname.sh
+source ./change_hostname
 
 # Figure out we we have yum, apt or something else to use for installing Puppet
 OS_FAMILY='Unknown'
