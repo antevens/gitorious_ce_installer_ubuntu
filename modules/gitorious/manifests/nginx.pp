@@ -1,4 +1,19 @@
 class gitorious::nginx {
+  case $operatingsystem {
+    "CentOS", "RedHat": { 
+        $cert_path = "/etc/pki/tls"
+    }
+    "Ubuntu", "Debian": {
+        $cert_path = "/etc/ssl"
+    }
+  }
+
+  user {"nginx":
+    ensure => present,
+    home => $gitorious::install_root,
+    shell => "/bin/false",
+  }
+
   package { "nginx":
     ensure => installed,
   }
@@ -39,7 +54,7 @@ class gitorious::nginx {
   }
 
 
-  define vhost($certificate_file="/etc/pki/tls/certs/localhost.crt", $certificate_key_file="/etc/pki/tls/private/localhost.key", $ca_chain=false) {
+  define vhost($certificate_file="${gitorious::nginx::cert_path}/certs/localhost.crt", $certificate_key_file="${gitorious::nginx::cert_path}/private/localhost.key", $ca_chain=false) {
     $nginx_gitorious_root = $gitorious::app_root
     $nginx_tarballs_root = $gitorious::tarballs_cache
     $nginx_repo_root = $gitorious::repository_root
@@ -54,10 +69,10 @@ class gitorious::nginx {
     }
   }
 
-  define vhost_with_self_signed_certs($subject="/C=NO/ST=Oslo/L=Oslo/CN=${name}") {
-    $cert = "/etc/pki/tls/certs/gitorious.crt"
-    $key = "/etc/pki/tls/private/gitorious.crt"
-
+  define vhost_with_self_signed_certs($subject="/C=NO/ST=Oslo/L=Oslo/CN=${name}", $cert_path="${gitorious::nginx::cert_path}") {
+    $cert = "${cert_path}/certs/gitorious.crt"
+    $key = "${cert_path}/private/gitorious.crt"
+    notice("Set key to ${key} and cert to ${cert}")
     gitorious::nginx::vhost { $name:
       certificate_file => $cert,
       certificate_key_file => $key,
