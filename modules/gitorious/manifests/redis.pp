@@ -11,7 +11,7 @@ class gitorious::redis {
     }
   }
 
-  package { "${package_list}":
+  package { ${package_list}:
     ensure => installed,
   }
 
@@ -19,6 +19,6 @@ class gitorious::redis {
     name => "${redis_service_name}",
     enable => true,
     ensure => running,
-    require => Package["${package_list}"],
+    require => Package[$package_list],
   }
 }

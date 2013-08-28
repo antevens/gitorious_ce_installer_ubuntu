@@ -11,13 +11,6 @@ class gitorious::ruby_git_daemons {
   }
 }
 class gitorious::native_git_daemons {
-  monit::config { "git-daemons":
-    pids_dir => "${gitorious::app_root}/log",
-    pidfile => "${gitorious::app_root}/log/git-daemons.pid",
-    repo_root => $gitorious::repository_root,
-    require => Package["git-daemon"],
-  }
-
   case $operatingsystem {
     "CentOS", "RedHat": { 
         $package_list = ["git-daemon"]
@@ -25,12 +18,17 @@ class gitorious::native_git_daemons {
     "Ubuntu", "Debian": {
         $package_list = ["git-daemon-run"]
     }
+
+  monit::config { "git-daemons":
+    pids_dir => "${gitorious::app_root}/log",
+    pidfile => "${gitorious::app_root}/log/git-daemons.pid",
+    repo_root => $gitorious::repository_root,
+    require => Package[$package_list],
   }
 
-  package {"git-daemon":
-    name => "${package_list}",
-    ensure => installed,
   }
+
+  package { $package_list: ensure => installed }
 
   file { "/etc/monit.d/git-daemon.monit":
     ensure => absent,
