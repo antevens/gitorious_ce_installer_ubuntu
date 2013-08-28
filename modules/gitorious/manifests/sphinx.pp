@@ -7,7 +7,7 @@ class gitorious::sphinx {
         $package_list = ["sphinx"]
     }
     "Ubuntu", "Debian": {
-        $package_list = ["sphinx-common"]
+        $package_list = ["sphinxsearch","sphinx-common"]
     }
   }
 
