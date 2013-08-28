@@ -14,10 +14,7 @@ class gitorious::sphinx {
   $app_root = $gitorious::app_root
 
   # Installed after database has been populated
-  package { "sphinx":
-    name => "${package_list}",
-    ensure => installed,
-  }
+  package { $package_list: ensure => installed }
 
   exec { "bootstrap_thinking_sphinx":
     command => "${gitorious::app_root}/bin/rake ts:config",
