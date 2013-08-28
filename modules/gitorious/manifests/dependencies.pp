@@ -5,7 +5,7 @@ class gitorious::dependencies {
 
   case $operatingsystem {
     CentOS: {
-      $monit_conf_dir = "/etc/monit.d"
+      $monit_conf_dir = "/etc/monit.d",
       case $operatingsystemrelease {
         /^5/: {
           $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc","ruby-devel","openssl","curl-devel"]
@@ -15,7 +15,7 @@ class gitorious::dependencies {
         }
       }
     }
-    Ubuntu: { $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc","ruby-dev","openssl","libcurl4-openssl-dev","sendmail"]}
+    Ubuntu: { $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc","ruby-dev","openssl","libcurl4-openssl-dev","sendmail"]},
     $monit_conf_dir = "/etc/monit/conf.d"
   }
 
