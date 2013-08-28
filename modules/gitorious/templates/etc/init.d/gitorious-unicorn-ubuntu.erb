@@ -12,11 +12,11 @@
 # Author: Jarl Stefansson <jarl.stefansson@gmail.com>
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DESC="Unicorn web server for Gitorious"
-NAME=gitorious-unicorn
+NAME=unicorn
 DAEMON=<%=app_root%>/bin/unicorn
 DAEMON_ARGS="-c config/unicorn.rb -D"
 PIDFILE=<%=app_root%>/tmp/pids/unicorn.pid 
-SCRIPTNAME=/etc/init.d/$NAME
+SCRIPTNAME=/etc/init.d/gitorious-unicorn
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
@@ -58,13 +58,13 @@ do_stop()
 	#   1 if daemon was already stopped
 	#   2 if daemon could not be stopped
 	#   other if a failure occurred
-	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile "$PIDFILE" #--name $NAME
 	RETVAL="$?"
 	[ "$RETVAL" = 2 ] && return 2
-	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --pidfile "$PIDFILE" #--exec $DAEMON
 	[ "$?" = 2 ] && return 2
 	# Many daemons don't delete their pidfiles when they exit.
-	rm -f $PIDFILE
+	rm -f "$PIDFILE"
 	return "$RETVAL"
 }
 
@@ -94,7 +94,7 @@ case "$1" in
 	esac
 	;;
   status)
-       status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+       status_of_proc -p "$PIDFILE" "$DAEMON" "$NAME" && exit 0 || exit $?
        ;;
   reload|force-reload)
 	log_daemon_msg "Reloading $DESC" "$NAME"
