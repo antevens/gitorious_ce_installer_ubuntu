@@ -12,13 +12,13 @@ class gitorious::ruby_git_daemons {
 }
 class gitorious::native_git_daemons {
   case $operatingsystem {
-    "CentOS", "RedHat": { 
+    "CentOS", "RedHat": {
         $package_list = ["git-daemon"]
     }
     "Ubuntu", "Debian": {
         $package_list = ["git-daemon-run"]
     }
-
+  }
   monit::config { "git-daemons":
     pids_dir => "${gitorious::app_root}/log",
     pidfile => "${gitorious::app_root}/log/git-daemons.pid",
@@ -26,7 +26,6 @@ class gitorious::native_git_daemons {
     require => Package[$package_list],
   }
 
-  }
 
   package { $package_list: ensure => installed }
 
