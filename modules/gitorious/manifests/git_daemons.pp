@@ -2,14 +2,16 @@ class gitorious::ruby_git_daemons {
   monit::config { "git-daemon":
     t_app_root => $gitorious::app_root,
     t_control_scripts_dir => $gitorious::control_scripts_dir,
+    t_monit_confd_dir => $gitorious::monit::monit_confd_dir
   }
-  file {"/etc/monit.d/git-daemons.monit":
+  file {"${gitorious::monit::monit_confd_dir}/git-daemons.monit":
     ensure => absent,
   }
-  file {"/etc/monit.d/git-proxy.monit":
+  file {"${gitorious::monit::monit_confd_dir}/git-proxy.monit":
     ensure => absent,
   }
 }
+
 class gitorious::native_git_daemons {
   case $operatingsystem {
     "CentOS", "RedHat": {
@@ -26,10 +28,9 @@ class gitorious::native_git_daemons {
     require => Package[$package_list],
   }
 
-
   package { $package_list: ensure => installed }
 
-  file { "/etc/monit.d/git-daemon.monit":
+  file { "${gitorious::monit::monit_confd_dir}/git-daemon.monit":
     ensure => absent,
   }
 }
