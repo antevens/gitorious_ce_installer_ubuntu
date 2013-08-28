@@ -6,14 +6,14 @@ class gitorious::dependencies {
   case $operatingsystem {
     CentOS: {       case $operatingsystemrelease {
         /^5/: {
-          $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc", "ruby-devel", "openssl", "curl-devel"]
+          $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc","ruby-devel","openssl","curl-devel"]
         }
         default: {
-          $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc", "ruby-devel", "openssl", "libcurl-devel"]
+          $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc","ruby-devel","openssl","libcurl-devel"]
         }
       }
     }
-    Ubuntu: { $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc", "ruby-dev", "openssl", "libcurl4-openssl-dev"]}
+    Ubuntu: { $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc","ruby-dev","openssl","libcurl4-openssl-dev","sendmail"]}
   }
 
   package { $package_list: ensure => installed }
@@ -41,5 +41,4 @@ class gitorious::dependencies {
     source => "puppet:///modules/gitorious/config/monit.conf",
     require => Package["monit"],
   }
-
 }
