@@ -14,10 +14,12 @@ class gitorious::dependencies {
         }
       }
       $monit_conf_dir = "/etc/monit.d"
+      $monit_conf_file = "/etc/monit.conf"
     }
-    Ubuntu: { 
+    Ubuntu: {
       $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc","ruby-dev","openssl","libcurl4-openssl-dev","sendmail"]
       $monit_conf_dir = "/etc/monit/conf.d"
+      $monit_conf_file="/etc/monit/monitrc"
     }
   }
 
@@ -38,7 +40,7 @@ class gitorious::dependencies {
                 ],
   }
 
-  file {"/etc/monit.conf":
+  file {"${monit_conf_file}":
     ensure => present,
     owner => "root",
     group => "root",
