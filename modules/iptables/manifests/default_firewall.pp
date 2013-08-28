@@ -13,12 +13,12 @@ class iptables::default_firewall {
     mode => "0600",
   }
 
-  exec {"restart_ubuntu_networking":
-    command => "/usr/bin/nohup /bin/sh -c '/usr/sbin/invoke-rc.d networking stop; sleep 2; /usr/sbin/invoke-rc.d networking start'",
-  }
 
   case $operatingsystem {
     Ubuntu, Debian: { 
+      exec {"restart_ubuntu_networking":
+         command => "/usr/bin/nohup /bin/sh -c '/usr/sbin/invoke-rc.d networking stop; sleep 2; /usr/sbin/invoke-rc.d networking start'",
+      }
       file { "/etc/network/if-pre-up.d/iptablesload":
         ensure => present,
         source => "puppet:///modules/iptables/iptablesload",
