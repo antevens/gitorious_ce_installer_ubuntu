@@ -11,9 +11,7 @@ class gitorious::redis {
     }
   }
 
-  package { ${package_list}:
-    ensure => installed,
-  }
+  package { $package_list: ensure => installed }
 
   service { "redis":
     name => "${redis_service_name}",
