@@ -5,6 +5,6 @@ set httpd port 2812 and
   allow localhost
   allow admin:monit
 
-include /etc/monit.d/*
+  include <%= monit_conf_dir %>/*
 
 set daemon 60
