@@ -22,6 +22,7 @@ class iptables::default_firewall {
         owner => "root",
         group => "root",
         mode => "0700",
+        require => File["${fw_rules_file}"],
       } ->
       exec {"restart_ubuntu_networking":
          command => "/usr/bin/nohup /bin/sh -c '/usr/sbin/invoke-rc.d networking stop; sleep 2; /usr/sbin/invoke-rc.d networking start'",
@@ -32,6 +33,7 @@ class iptables::default_firewall {
         owner => "root",
         group => "root",
         mode => "0700",
+        require => File["${fw_rules_file}"],
       }
     }
     CentOS, RedHat: {
