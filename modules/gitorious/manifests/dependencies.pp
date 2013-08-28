@@ -4,19 +4,15 @@ class gitorious::dependencies {
   Exec { path => ["/opt/ruby-enterprise/bin","/usr/local/bin","/usr/bin","/bin", "/usr/sbin"] }
 
   case $operatingsystem {
-    CentOS: { $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc", "ruby-devel", "openssl"]
-      case $operatingsystemrelease {
+    CentOS: {       case $operatingsystemrelease {
         /^5/: {
-          $package_list += ["curl-devel"]
+          $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc", "ruby-devel", "openssl", "curl-devel"]
         }
         default: {
-          $package_list += ["libcurl-devel"]
+          $package_list = ["monit", "memcached", "ImageMagick","gcc-c++","zlib-devel","make","wget","libxml2","libxml2-devel","libxslt","libxslt-devel","gcc", "ruby-devel", "openssl", "libcurl-devel"]
         }
       }
     }
-  }
-
-  case $operatingsystem {
     Ubuntu: { $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc", "ruby-dev", "openssl", "libcurl4-openssl-dev"]}
   }
 

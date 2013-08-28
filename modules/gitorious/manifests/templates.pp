@@ -4,6 +4,7 @@
 # - merge the specified tag
 # - do any required maintenance
 define gitorious::version() {
+  include gitorious::sphinx
 
   file { $gitorious::deployed_tags_dir:
     ensure => directory,
@@ -25,7 +26,7 @@ define gitorious::version() {
   exec { "post_version_upgrade":
     command => "sh -c 'export GIT_SSL_NO_VERIFY=true && cd ${gitorious::app_root} && bin/bundle install && git submodule update --init && bin/rake db:migrate && bin/rake assets:clear && touch $probe'",
     path => ["/usr/local/bin","/usr/bin","/bin", "/usr/sbin"],
-    require => [Package["sphinx"],File["bundler_config_file"]],
+    require => [Package[$gitorious::sphinx::package_list],File["bundler_config_file"]],
     creates => $probe,
   }
 
