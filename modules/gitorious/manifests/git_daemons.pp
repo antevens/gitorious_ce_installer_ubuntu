@@ -19,7 +19,7 @@ class gitorious::native_git_daemons {
         $package_list = ["git-daemon"]
     }
     "Ubuntu", "Debian": {
-        $package_list = ["git-daemon-run"]
+        $package_list = ["git"]
     }
   }
   monit::config { "git-daemons":
