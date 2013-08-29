@@ -10,7 +10,7 @@ class monit {
   }
 
   define config($t_app_root="", $t_control_scripts_dir="", $fqdn=false, $pids_dir="", $pidfile="", $repo_root="") {
-    file{"${monit_confd_dir}/${name}.monit":
+    file{"${gitorious::monit::monit_confd_dir}/${name}.monit":
       ensure => present,
       owner => "root",
       group => "root",

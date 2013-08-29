@@ -2,7 +2,6 @@ class gitorious::ruby_git_daemons {
   monit::config { "git-daemon":
     t_app_root => $gitorious::app_root,
     t_control_scripts_dir => $gitorious::control_scripts_dir,
-    t_monit_confd_dir => $gitorious::monit::monit_confd_dir
   }
   file {"${gitorious::monit::monit_confd_dir}/git-daemons.monit":
     ensure => absent,
