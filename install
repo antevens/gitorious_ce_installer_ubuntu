@@ -35,8 +35,8 @@ case ${OS_FAMILY} in
     ;;
     "Debian")
     # Debian based
-        apt-get install -y ruby puppet ruby-dev rubygems
-        
+        apt-get install -y ruby puppet ruby-dev
+        gem install -v 1.8.25 rubygems-update && ruby `gem env gemdir`/gems/rubygems-update-1.8.25/setup.rb
     ;;
     "Darwin")
     # Mac OS X
