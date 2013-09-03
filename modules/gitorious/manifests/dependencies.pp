@@ -17,7 +17,7 @@ class gitorious::dependencies {
       $monit_conf_file = "/etc/monit.conf"
     }
     Ubuntu: {
-      $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc","ruby-dev","openssl","libcurl4-openssl-dev","sendmail","ruby-stomp", "ruby-daemons", "libreadline6-dev", "libicu48", "libicu-dev", "ibonig2", "libtinfo-dev"]
+      $package_list = ["monit", "memcached", "imagemagick","gobjc++","libghc-zlib-dev","make","wget","libxml2","libxml2-dev","libxslt1.1","libxslt1-dev","gcc","ruby-dev","openssl","libcurl4-openssl-dev","sendmail","ruby-stomp", "ruby-daemons", "libreadline6-dev", "libicu48", "libicu-dev", "libonig2", "libtinfo-dev"]
       $monit_conf_dir = "/etc/monit/conf.d"
       $monit_conf_file="/etc/monit/monitrc"
     }
